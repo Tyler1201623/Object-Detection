@@ -86,9 +86,10 @@ async function startVideoStream() {
 
 async function switchCamera() {
     showLoading();
-    cancelAnimationFrame(animationFrameId);
+    isWebcamActive = true; // Force active state
     
-    // Strong cleanup
+    // Complete cleanup
+    cancelAnimationFrame(animationFrameId);
     if (stream) {
         stream.getTracks().forEach(track => {
             track.stop();
@@ -101,15 +102,18 @@ async function switchCamera() {
     
     try {
         await startVideoStream();
-        // Double check video readiness
-        if (video.readyState === 4) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            if (isWebcamActive) {
-                // Immediate detection restart with verification
-                detectFrame();
-            }
-        }
+        // Wait for video to be fully ready
+        await new Promise((resolve) => {
+            video.onloadeddata = () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                resolve();
+            };
+        });
+        
+        // Kickstart detection immediately
+        detectFrame();
+        
     } catch (err) {
         handleStreamError(err);
     } finally {
@@ -117,25 +121,21 @@ async function switchCamera() {
     }
 }
 
-// Enhanced detection loop with verification
 async function detectFrame() {
-    if (!isWebcamActive || !video.videoWidth) {
-        cancelAnimationFrame(animationFrameId);
-        return;
-    }
+    if (!video.videoWidth) return;
     
     try {
-        if (video.readyState === 4) {
-            ctx.drawImage(video, 0, 0);
-            const predictions = await model.detect(video, 20, 0.75);
-            drawPredictions(predictions);
+        ctx.drawImage(video, 0, 0);
+        const predictions = await model.detect(video);
+        drawPredictions(predictions);
+        
+        if (isWebcamActive) {
+            animationFrameId = requestAnimationFrame(detectFrame);
         }
-        animationFrameId = requestAnimationFrame(detectFrame);
     } catch (error) {
         console.error('Detection error:', error);
-        // Robust recovery
         if (isWebcamActive) {
-            setTimeout(() => requestAnimationFrame(detectFrame), 500);
+            animationFrameId = requestAnimationFrame(detectFrame);
         }
     }
 }
