@@ -31,16 +31,28 @@ async function switchCamera() {
 
 async function startVideoStream() {
     try {
-        stream = await navigator.mediaDevices.getUserMedia({
-            video: { 
-                width: { ideal: 1920 },
-                height: { ideal: 1080 },
-                facingMode: currentFacingMode,
-                frameRate: { ideal: 60 }
+        // First check if mediaDevices is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('Your browser does not support camera access');
+        }
+
+        // Get list of available devices first
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+        // Configure camera settings
+        const constraints = {
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: currentFacingMode
             },
             audio: false
-        });
+        };
+
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
+
         return new Promise((resolve) => {
             video.onloadedmetadata = () => {
                 video.play();
@@ -50,12 +62,11 @@ async function startVideoStream() {
             };
         });
     } catch (err) {
-        console.error('Camera access error:', err);
+        console.log('Available devices:', await navigator.mediaDevices.enumerateDevices());
+        console.log('Camera error details:', err);
         throw err;
     }
-}
-
-document.getElementById('startWebcam').addEventListener('click', async () => {
+}document.getElementById('startWebcam').addEventListener('click', async () => {
     if (!isWebcamActive) {
         await startVideoStream();
         isWebcamActive = true;
