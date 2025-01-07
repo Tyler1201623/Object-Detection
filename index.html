@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Real-time Object Detection</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -15,7 +17,8 @@
             <button id="flipCamera">Flip Camera</button>
         </div>
         <div class="display-section">
-            <video id="video" autoplay playsinline></video>
+            <div id="loading" class="loading">Loading camera...</div>
+            <video id="video" autoplay playsinline muted></video>
             <canvas id="canvas"></canvas>
             <div id="predictions"></div>
         </div>
