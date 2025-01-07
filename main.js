@@ -66,22 +66,23 @@ async function startVideoStream() {
         console.log('Camera error details:', err);
         throw err;
     }
+}
 document.getElementById('startWebcam').addEventListener('click', async () => {
     if (!isWebcamActive) {
         try {
-            // Immediately request camera access
             stream = await navigator.mediaDevices.getUserMedia({
                 video: { 
-                    facingMode: currentFacingMode
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    facingMode: currentFacingMode,
+                    frameRate: { ideal: 60 }
                 },
                 audio: false
             });
             
-            // Set video source and start stream right away
             video.srcObject = stream;
             video.play();
             
-            // Set canvas dimensions once video loads
             video.onloadedmetadata = () => {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
@@ -111,7 +112,14 @@ async function detectFrame() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
     try {
-        const predictions = await model.detect(video);
+        const predictions = await model.detect(video, 20, 0.75); // Increased confidence threshold
+        drawPredictions(predictions);
+    } catch (error) {
+        console.error('Detection error:', error);
+    }
+    
+    animationFrameId = requestAnimationFrame(detectFrame);
+}        const predictions = await model.detect(video);
         drawPredictions(predictions);
     } catch (error) {
         console.error('Detection error:', error);
