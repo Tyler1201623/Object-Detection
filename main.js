@@ -85,11 +85,60 @@ async function startVideoStream() {
 }
 
 async function switchCamera() {
-    stream?.getTracks().forEach(track => track.stop());
+    showLoading();
+    cancelAnimationFrame(animationFrameId);
+    
+    // Strong cleanup
+    if (stream) {
+        stream.getTracks().forEach(track => {
+            track.stop();
+            stream.removeTrack(track);
+        });
+    }
+    video.srcObject = null;
+    
     currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
-    await startVideoStream();
+    
+    try {
+        await startVideoStream();
+        // Double check video readiness
+        if (video.readyState === 4) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            if (isWebcamActive) {
+                // Immediate detection restart with verification
+                detectFrame();
+            }
+        }
+    } catch (err) {
+        handleStreamError(err);
+    } finally {
+        hideLoading();
+    }
 }
 
+// Enhanced detection loop with verification
+async function detectFrame() {
+    if (!isWebcamActive || !video.videoWidth) {
+        cancelAnimationFrame(animationFrameId);
+        return;
+    }
+    
+    try {
+        if (video.readyState === 4) {
+            ctx.drawImage(video, 0, 0);
+            const predictions = await model.detect(video, 20, 0.75);
+            drawPredictions(predictions);
+        }
+        animationFrameId = requestAnimationFrame(detectFrame);
+    } catch (error) {
+        console.error('Detection error:', error);
+        // Robust recovery
+        if (isWebcamActive) {
+            setTimeout(() => requestAnimationFrame(detectFrame), 500);
+        }
+    }
+}
 async function handleStreamSuccess(stream) {
     video.srcObject = stream;
     return new Promise((resolve) => {
@@ -105,9 +154,7 @@ async function handleStreamSuccess(stream) {
             }
         };
     });
-}
-
-function handleStreamError(error) {
+}function handleStreamError(error) {
     console.error('Stream error:', error);
     isWebcamActive = false;
     stream?.getTracks().forEach(track => track.stop());
