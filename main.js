@@ -48,7 +48,6 @@ document.getElementById('stopWebcam').addEventListener('click', () => {
     }
 });
 
-// Core camera functions
 async function initializeCamera() {
     showLoading();
     try {
@@ -86,10 +85,10 @@ async function startVideoStream() {
 
 async function switchCamera() {
     showLoading();
-    isWebcamActive = true; // Force active state
+    isWebcamActive = true;
     
-    // Complete cleanup
     cancelAnimationFrame(animationFrameId);
+    
     if (stream) {
         stream.getTracks().forEach(track => {
             track.stop();
@@ -101,24 +100,63 @@ async function switchCamera() {
     currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
     
     try {
-        await startVideoStream();
-        // Wait for video to be fully ready
+        const constraints = {
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: { exact: currentFacingMode },
+                frameRate: { ideal: 30 }
+            },
+            audio: false
+        };
+        
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        
         await new Promise((resolve) => {
-            video.onloadeddata = () => {
+            video.onloadeddata = async () => {
+                await video.play();
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 resolve();
             };
         });
         
-        // Kickstart detection immediately
         detectFrame();
         
     } catch (err) {
-        handleStreamError(err);
+        console.error('Camera switch failed:', err);
+        currentFacingMode = 'environment';
+        await startVideoStream();
+        detectFrame();
     } finally {
         hideLoading();
     }
+}
+
+async function handleStreamSuccess(stream) {
+    video.srcObject = stream;
+    return new Promise((resolve) => {
+        video.onloadedmetadata = async () => {
+            try {
+                await video.play();
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                resolve();
+            } catch (err) {
+                console.error('Playback failed:', err);
+                document.getElementById('predictions').textContent = 'Video playback failed. Please try again.';
+            }
+        };
+    });
+}
+
+function handleStreamError(error) {
+    console.error('Stream error:', error);
+    isWebcamActive = false;
+    stream?.getTracks().forEach(track => track.stop());
+    video.srcObject = null;
+    document.getElementById('predictions').textContent = 'Camera error occurred. Please reload the page.';
 }
 
 async function detectFrame() {
@@ -139,49 +177,7 @@ async function detectFrame() {
         }
     }
 }
-async function handleStreamSuccess(stream) {
-    video.srcObject = stream;
-    return new Promise((resolve) => {
-        video.onloadedmetadata = async () => {
-            try {
-                await video.play();
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                resolve();
-            } catch (err) {
-                console.error('Playback failed:', err);
-                document.getElementById('predictions').textContent = 'Video playback failed. Please try again.';
-            }
-        };
-    });
-}function handleStreamError(error) {
-    console.error('Stream error:', error);
-    isWebcamActive = false;
-    stream?.getTracks().forEach(track => track.stop());
-    video.srcObject = null;
-    document.getElementById('predictions').textContent = 'Camera error occurred. Please reload the page.';
-}
 
-// Detection loop
-async function detectFrame() {
-    if (!isWebcamActive || !video.videoWidth) return;
-    
-    try {
-        if (canvas.width !== video.videoWidth) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-        }
-        
-        ctx.drawImage(video, 0, 0);
-        const predictions = await model.detect(video, 20, 0.75);
-        drawPredictions(predictions);
-        animationFrameId = requestAnimationFrame(detectFrame);
-    } catch (error) {
-        handleStreamError(error);
-    }
-}
-
-// Optimized rendering
 function drawPredictions(predictions) {
     predictions.forEach(({bbox: [x, y, width, height], class: label, score}) => {
         ctx.strokeStyle = '#00ff00';
