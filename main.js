@@ -66,14 +66,35 @@ async function startVideoStream() {
         console.log('Camera error details:', err);
         throw err;
     }
-}document.getElementById('startWebcam').addEventListener('click', async () => {
+document.getElementById('startWebcam').addEventListener('click', async () => {
     if (!isWebcamActive) {
-        await startVideoStream();
-        isWebcamActive = true;
-        detectFrame();
+        try {
+            // Immediately request camera access
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: currentFacingMode
+                },
+                audio: false
+            });
+            
+            // Set video source and start stream right away
+            video.srcObject = stream;
+            video.play();
+            
+            // Set canvas dimensions once video loads
+            video.onloadedmetadata = () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+            };
+            
+            isWebcamActive = true;
+            detectFrame();
+            
+        } catch (err) {
+            console.error('Camera access error:', err);
+        }
     }
 });
-
 document.getElementById('stopWebcam').addEventListener('click', () => {
     if (isWebcamActive) {
         cancelAnimationFrame(animationFrameId);
