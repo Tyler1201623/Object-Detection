@@ -5,26 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Real-time object detection using TensorFlow.js">
+    <meta name="theme-color" content="#1a1a2e">
+    
     <title>Real-time Object Detection</title>
+    
+    <!-- Performance optimizations -->
+    <link rel="preload" as="style" href="style.css">
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js">
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd">
+    <link rel="preload" as="script" href="main.js">
+    
+    <!-- DNS prefetch -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Real-time Object Detection</h1>
+        
         <div class="input-section">
-            <button id="startWebcam">Start Camera</button>
-            <button id="stopWebcam">Stop Camera</button>
-            <button id="flipCamera">Flip Camera</button>
+            <button id="startWebcam" type="button" aria-label="Start Camera">Start Camera</button>
+            <button id="stopWebcam" type="button" aria-label="Stop Camera">Stop Camera</button>
+            <button id="flipCamera" type="button" aria-label="Switch Camera">Flip Camera</button>
         </div>
+        
         <div class="display-section">
-            <div id="loading" class="loading">Loading camera...</div>
+            <div id="loading" class="loading" aria-live="polite">Loading camera...</div>
             <video id="video" autoplay playsinline muted></video>
-            <canvas id="canvas"></canvas>
-            <div id="predictions"></div>
+            <canvas id="canvas" aria-label="Object detection overlay"></canvas>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
-    <script src="main.js"></script>
+
+    <!-- Load scripts with performance attributes -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js" defer crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd" defer crossorigin="anonymous"></script>
+    <script src="main.js" defer></script>
 </body>
 </html>
