@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Object Detection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Object Detection</h1>
+        <div class="input-section">
+            <button id="startWebcam">Start Webcam</button>
+            <button id="stopWebcam">Stop Webcam</button>
+        </div>
+        <div class="display-section">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div id="predictions"></div>
+        </div>
+    </div>
+    <script src="../models/tfjs.js"></script>
+    <script src="../models/coco-ssd.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
