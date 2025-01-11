@@ -163,6 +163,10 @@ async function detectFrame() {
     if (!video.videoWidth) return;
     
     try {
+        // Match canvas to video dimensions
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
         ctx.drawImage(video, 0, 0);
         const predictions = await model.detect(video);
         drawPredictions(predictions);
@@ -180,20 +184,25 @@ async function detectFrame() {
 
 function drawPredictions(predictions) {
     predictions.forEach(({bbox: [x, y, width, height], class: label, score}) => {
+        // Brighter colors for better visibility
         ctx.strokeStyle = '#00ff00';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.strokeRect(x, y, width, height);
         
-        const text = `${label} ${Math.round(score * 100)}%`;
+        // Enhanced score display
+        const confidence = Math.round(score * 100);
+        const text = `${label} ${confidence}%`;
         const textY = y > 20 ? y - 5 : y + 20;
         
-        ctx.font = 'bold 16px Arial';
+        ctx.font = 'bold 18px Arial';
         const metrics = ctx.measureText(text);
         
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.fillRect(x, textY - 16, metrics.width + 4, 20);
+        // Better background contrast
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(x, textY - 20, metrics.width + 8, 24);
         
+        // Brighter text
         ctx.fillStyle = '#00ff00';
-        ctx.fillText(text, x + 2, textY);
+        ctx.fillText(text, x + 4, textY);
     });
 }
