@@ -1,208 +1,699 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :root {
-    --primary-gradient: linear-gradient(45deg, #4CAF50, #45a049);
-    --danger-gradient: linear-gradient(45deg, #ff4444, #cc0000);
-    --flip-gradient: linear-gradient(45deg, #2196F3, #1976D2);
-    --bg-gradient: linear-gradient(135deg, #1a1a2e, #16213e);
+  --primary: #7f5af0;
+  --primary-light: #9f7afa;
+  --primary-dark: #6040c0;
+  --secondary: #2cb67d;
+  --secondary-light: #4cd99f;
+  --secondary-dark: #1a9560;
+  --danger: #e53170;
+  --danger-light: #ff5390;
+  --danger-dark: #c01050;
+  --neutral: #16161a;
+  --neutral-light: #242629;
+  --neutral-dark: #010101;
+  --text: #fffffe;
+  --text-muted: #94a1b2;
+  --background: #16161a;
+  --card: #242629;
+  --border-radius: 12px;
+  --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Dark/Light mode theming */
+:root[data-theme="light"] {
+  --primary: #6941c6;
+  --primary-light: #8b5cf6;
+  --primary-dark: #5b21b6;
+  --secondary: #059669;
+  --secondary-light: #10b981;
+  --secondary-dark: #047857;
+  --danger: #dc2626;
+  --danger-light: #ef4444;
+  --danger-dark: #b91c1c;
+  --neutral: #f9fafb;
+  --neutral-light: #ffffff;
+  --neutral-dark: #f3f4f6;
+  --text: #111827;
+  --text-muted: #4b5563;
+  --background: #f9fafb;
+  --card: #ffffff;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-gradient);
-    color: #ffffff;
-    min-height: 100vh;
-    overflow-x: hidden;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  background: var(--background);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
 h1 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    text-align: center;
-    color: #fff;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    background: var(--primary-gradient);
-    padding: 15px 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transform: translateZ(0);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  background-image: linear-gradient(90deg, var(--primary), var(--secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .input-section {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    max-width: 600px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 16px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+}
+
+.model-selection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 12px;
+  background: var(--neutral-dark);
+  border-radius: 8px;
+}
+
+select#model-select {
+  background-color: var(--neutral-dark);
+  color: var(--text-color);
+  border: none;
+  padding: 8px 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  border-radius: 8px;
+  flex-grow: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+select#model-select:hover,
+select#model-select:focus {
+  background-color: var(--neutral-dark-hover);
+  outline: none;
+}
+
+select#model-select option {
+  background-color: var(--neutral-dark);
+  color: var(--text-color);
+  font-weight: 500;
 }
 
 button {
-    padding: 12px 25px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    will-change: transform;
+  padding: 14px 26px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+button:hover::before {
+  transform: translateX(100%);
 }
 
 #startWebcam {
-    background: var(--primary-gradient);
-    color: white;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  background: var(--secondary);
+  color: var(--neutral-dark);
 }
 
 #stopWebcam {
-    background: var(--danger-gradient);
-    color: white;
-    box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+  background: var(--danger);
+  color: var(--text);
 }
 
 #flipCamera {
-    background: var(--flip-gradient);
-    color: white;
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+  background: var(--primary);
+  color: var(--text);
+}
+
+#darkModeToggle {
+  background: var(--card);
+  color: var(--text);
+  padding: 10px;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: 24px;
+  right: 24px;
 }
 
 button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 button:active {
-    transform: translateY(1px);
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  transform: translateY(1px);
 }
 
 .display-section {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    background: #000;
-    height: 0;
-    padding-bottom: 56.25%;
-    margin-top: 20px;
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  background: var(--neutral-dark);
+  height: 0;
+  padding-bottom: 56.25%;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-video, canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    margin: 0;
-    padding: 0;
-}#predictions {
-    margin-top: 20px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 10px;
-    color: #fff;
-    font-size: 1.1rem;
-    width: 100%;
-    max-width: 800px;
+video,
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Ensure video is visible with proper z-index */
+video {
+  z-index: 1;
+  background-color: var(--neutral-dark);
+}
+
+canvas {
+  z-index: 2;
+  background-color: transparent;
+}
+
+/* Add specific media rules for video in Safari and Firefox */
+@supports (-webkit-touch-callout: none) {
+  /* Safari-specific rules */
+  video {
+    object-position: center;
+  }
+}
+
+@-moz-document url-prefix() {
+  /* Firefox-specific rules */
+  video {
+    object-position: center;
+  }
+}
+
+/* Use backdrop-filter only where supported */
+@supports (backdrop-filter: blur(8px)) {
+  .loading,
+  .stats-panel,
+  .snapshot-controls {
+    backdrop-filter: blur(8px);
+  }
+}
+
+#predictions {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--card);
+  border-radius: var(--border-radius);
+  color: var(--text);
+  font-size: 1rem;
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: block;
+}
+
+.predictions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.predictions-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.total-count {
+  background: var(--primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.predictions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.prediction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.prediction-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.prediction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.prediction-details {
+  flex: 1;
+}
+
+.prediction-label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+
+.prediction-count {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.no-objects {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 .loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    display: none;
-    z-index: 10;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--text);
+  padding: 20px 30px;
+  border-radius: var(--border-radius);
+  font-size: 1.2rem;
+  display: none;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .loading.active {
-    display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
-  @media (min-width: 1200px) {
-      .display-section {
-          height: 80vh;
-          padding-bottom: 0;
-      }
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stats-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius);
+  padding: 12px;
+  color: var(--text);
+  font-size: 0.9rem;
+  z-index: 5;
+  display: none;
+}
+
+.stats-panel.active {
+  display: block;
+}
+
+@media (min-width: 1200px) {
+  .display-section {
+    height: 75vh;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 1199px) {
+  .container {
+    padding: 16px;
   }
 
-  @media (max-width: 1199px) {
-      .container {
-          padding: 10px;
-      }
-    
-      .display-section {
-          max-width: 95vw;
-          padding-bottom: 71.25%;
-      }
+  .display-section {
+    max-width: 95vw;
+    padding-bottom: 71.25%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
   }
 
-  @media (max-width: 768px) {
-      .container {
-          padding: 15px;
-      }
-
-      button {
-          padding: 10px 20px;
-          font-size: 1rem;
-          width: calc(50% - 10px);
-          min-width: 140px;
-      }
-
-      .display-section {
-          max-width: 100%;
-          padding-bottom: 75%;
-          margin: 10px 0;
-      }
+  button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    width: calc(50% - 10px);
+    min-width: 140px;
   }
-}@media (max-width: 480px) {
-    .container {
-        padding: 10px;
-    }
 
-    .input-section {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .display-section {
+    max-width: 100%;
+    padding-bottom: 75%;
+    margin: 10px 0;
+  }
 
-    button {
-        width: 100%;
-    }
+  #darkModeToggle {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .input-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Dark mode is default, so we don't need to redefine colors for it */
+
+.snapshots-container {
+  width: 100%;
+  max-width: 1200px;
+  display: none;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.snapshot-item {
+  position: relative;
+  width: 280px;
+  height: 210px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.snapshot-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.snapshot-item canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.snapshot-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.snapshot-item:hover .snapshot-controls {
+  opacity: 1;
+}
+
+.snapshot-timestamp {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.snapshot-download,
+.snapshot-delete {
+  background: none;
+  border: none;
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  padding: 0;
+  box-shadow: none;
+}
+
+.snapshot-download:hover {
+  background: var(--secondary);
+  color: var(--neutral-dark);
+  transform: translateY(0);
+}
+
+.snapshot-delete:hover {
+  background: var(--danger);
+  color: var(--text);
+  transform: translateY(0);
+}
+
+.snapshot-feedback {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--secondary);
+  color: var(--neutral-light);
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: feedback-anim 3s forwards;
+  z-index: 1000;
+}
+
+@keyframes feedback-anim {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(var(--danger-light-rgb, 239, 68, 68), 0.1);
+  border-left: 4px solid var(--danger);
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.error-message .material-symbols-rounded {
+  color: var(--danger);
+  font-size: 24px;
+}
+
+.error-message p {
+  color: var(--text);
+  margin: 0;
+}
+
+/* Pulse animation for active detection */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 127, 90, 240), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--primary-rgb, 127, 90, 240), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 127, 90, 240), 0);
+  }
+}
+
+.display-section.active-detection {
+  animation: pulse 2s infinite;
+}
+
+/* Add smooth transitions for dark/light mode switching */
+body,
+button,
+h1,
+canvas,
+.display-section,
+.loading,
+.stats-panel,
+#predictions,
+.snapshot-item,
+.error-message {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-light);
+}
+
+/* Custom selection */
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+/* Custom RGB variables for animations */
+:root {
+  --primary-rgb: 127, 90, 240;
+  --secondary-rgb: 44, 182, 125;
+  --danger-rgb: 229, 49, 112;
+}
+
+:root[data-theme="light"] {
+  --primary-rgb: 105, 65, 198;
+  --secondary-rgb: 5, 150, 105;
+  --danger-rgb: 220, 38, 38;
 }
